@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class AalifeApplication {
+public class AalifeApi {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AalifeApplication.class, args);
+		SpringApplication.run(AalifeApi.class, args);
 	}
 
 }
