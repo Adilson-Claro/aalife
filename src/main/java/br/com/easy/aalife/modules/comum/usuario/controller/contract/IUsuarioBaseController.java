@@ -1,0 +1,35 @@
+package br.com.easy.aalife.modules.comum.usuario.controller.contract;
+
+import br.com.easy.aalife.modules.comum.usuario.dto.UsuarioBaseAtualizacaoRequest;
+import br.com.easy.aalife.modules.comum.usuario.dto.UsuarioBaseRequest;
+import br.com.easy.aalife.modules.comum.usuario.dto.UsuarioBaseResponse;
+import br.com.easy.aalife.modules.profissional.dto.UsuarioProfissionalAtualizacaoRequest;
+import br.com.easy.aalife.modules.profissional.dto.UsuarioProfissionalResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
+
+public interface IUsuarioBaseController {
+
+    @PostMapping("/cadastrar")
+    @Operation(summary = "Endpoint responsavel pelo cadastro de usuario comum.")
+    void salvar(@RequestBody @Valid UsuarioBaseRequest request);
+
+    @PutMapping("/{id}/editar")
+    @Operation(summary = "Endpoint responsavel pela edicao de profissional")
+    void editar(@PathVariable Integer id, @RequestBody UsuarioBaseAtualizacaoRequest request);
+
+    @PutMapping("/{id}/alterar-situacao")
+    @Operation(summary = "Endpoint responsavel por alterar a situacao de um profissional")
+    void alterarSituacao(@PathVariable Integer id);
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Endpoint responsavel por buscar usuario por id")
+    UsuarioBaseResponse buscarPorId(@PathVariable Integer id);
+
+    @GetMapping
+    @Operation(summary = "Endpoint responsavel por buscar usuarios")
+    Page<UsuarioBaseResponse> buscarUsuarios(Pageable pageable);
+}

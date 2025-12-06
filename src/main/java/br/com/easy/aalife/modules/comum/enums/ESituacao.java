@@ -10,5 +10,5 @@ public enum ESituacao {
     A("Ativo"),
     I("Inativo");
 
-    private final String situacao;
+    private final String descricao;
 }

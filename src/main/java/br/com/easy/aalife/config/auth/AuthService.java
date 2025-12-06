@@ -4,7 +4,6 @@ import br.com.easy.aalife.config.auth.dto.LoginRequest;
 import br.com.easy.aalife.config.auth.dto.LoginResponse;
 import br.com.easy.aalife.config.exceptions.NotFoundException;
 import br.com.easy.aalife.config.exceptions.ValidationException;
-import br.com.easy.aalife.modules.comum.usuario.dto.UsuarioBaseRequest;
 import br.com.easy.aalife.modules.comum.usuario.model.UsuarioBase;
 import br.com.easy.aalife.modules.comum.usuario.repository.UsuarioBaseRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,15 +24,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtEncoder jwtEncoder;
 
-    public void registrar(UsuarioBaseRequest request) {
-        validarUsuarioExistente(request.username());
-        var usuario = UsuarioBase.of(request);
-        usuario.setPassword(passwordEncoder.encode(request.password()));
-        repository.save(usuario);
-    }
-
     public LoginResponse login(LoginRequest request) {
-        var usuario = validarUsuarioNaoEncontrado(request.username());
+        var usuario = validarUsuario(request.username());
         validarSenha(request.password(), usuario);
         var claims = montarClaim(usuario);
         var token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
@@ -45,7 +37,7 @@ public class AuthService {
 
         return JwtClaimsSet.builder()
                 .issuer("api")
-                .subject(usuario.getUsername())
+                .subject(usuario.getEmail())
                 .issuedAt(now)
                 .expiresAt(now.plus(24, ChronoUnit.HOURS))
                 .claim("role", usuario.getRole().name())
@@ -58,14 +50,8 @@ public class AuthService {
         }
     }
 
-    private UsuarioBase validarUsuarioNaoEncontrado(String username) {
-        return repository.findByUsername(username)
+    private UsuarioBase validarUsuario(String username) {
+        return repository.findByEmail(username)
                 .orElseThrow(() -> new NotFoundException("Usuário não encontrado"));
-    }
-
-    private void validarUsuarioExistente(String username) {
-        if (repository.existsByUsername(username)) {
-            throw new ValidationException("Este usuário já existe.");
-        }
     }
 }

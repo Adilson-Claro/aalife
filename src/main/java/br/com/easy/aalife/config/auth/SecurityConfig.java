@@ -1,9 +1,9 @@
 package br.com.easy.aalife.config.auth;
 
+import br.com.easy.aalife.modules.comum.enums.ERole;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,18 +33,17 @@ public class SecurityConfig {
     private RSAPrivateKey privateKey;
 
     @Bean
-    @SneakyThrows
     public SecurityFilterChain filterChain(HttpSecurity http) {
-
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-                        .anyRequest().authenticated())
-                .oauth2ResourceServer(oauth ->
-                        oauth.jwt(Customizer.withDefaults()))
+                        .requestMatchers("/api/profissional/cadastrar/**").permitAll()
+                        .requestMatchers("/api/usuario/cadastrar/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .oauth2ResourceServer(oauth -> oauth.jwt(Customizer.withDefaults()))
                 .build();
     }
 
@@ -55,7 +54,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtEncoder jwtEncoder() {
-        var jwk = new RSAKey.Builder(this.publicKey).privateKey(privateKey).build();
+        var jwk = new RSAKey.Builder(publicKey).privateKey(privateKey).build();
         var jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwks);
     }
