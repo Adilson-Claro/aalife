@@ -2,10 +2,9 @@ package br.com.easy.aalife.config.auth;
 
 import br.com.easy.aalife.config.auth.dto.LoginRequest;
 import br.com.easy.aalife.config.auth.dto.LoginResponse;
-import br.com.easy.aalife.config.exceptions.NotFoundException;
 import br.com.easy.aalife.config.exceptions.ValidationException;
 import br.com.easy.aalife.modules.comum.usuario.model.UsuarioBase;
-import br.com.easy.aalife.modules.comum.usuario.repository.UsuarioBaseRepository;
+import br.com.easy.aalife.modules.comum.usuario.service.UsuarioBaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -20,13 +19,14 @@ import java.time.temporal.ChronoUnit;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final UsuarioBaseRepository repository;
+    private final UsuarioBaseService usuarioBaseService;
     private final PasswordEncoder passwordEncoder;
     private final JwtEncoder jwtEncoder;
 
     public LoginResponse login(LoginRequest request) {
-        var usuario = validarUsuario(request.username());
-        validarSenha(request.password(), usuario);
+        var usuario = usuarioBaseService.validarUsuario(request.email());
+        usuarioBaseService.validarUsuarioAtivo(usuario.getSituacao());
+        validarSenha(request.senha(), usuario);
         var claims = montarClaim(usuario);
         var token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
         return new LoginResponse(token);
@@ -48,10 +48,5 @@ public class AuthService {
         if (!usuario.isLoginCorreto(password, passwordEncoder)) {
             throw new ValidationException("Senha inválida");
         }
-    }
-
-    private UsuarioBase validarUsuario(String username) {
-        return repository.findByEmail(username)
-                .orElseThrow(() -> new NotFoundException("Usuário não encontrado"));
     }
 }

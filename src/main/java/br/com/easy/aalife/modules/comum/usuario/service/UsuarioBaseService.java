@@ -1,6 +1,8 @@
 package br.com.easy.aalife.modules.comum.usuario.service;
 
+import br.com.easy.aalife.config.exceptions.NotFoundException;
 import br.com.easy.aalife.config.exceptions.ValidationException;
+import br.com.easy.aalife.modules.comum.enums.ESituacao;
 import br.com.easy.aalife.modules.comum.usuario.dto.UsuarioBaseAtualizacaoRequest;
 import br.com.easy.aalife.modules.comum.usuario.dto.UsuarioBaseRequest;
 import br.com.easy.aalife.modules.comum.usuario.dto.UsuarioBaseResponse;
@@ -12,6 +14,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import static br.com.easy.aalife.modules.comum.util.ConstantsUtils.EX_USUARIO_NAO_ENCONTRADO;
+import static br.com.easy.aalife.modules.comum.util.ConstantsUtils.MSG_USUARIO_JA_CADASTRADO;
+
 @Service
 @RequiredArgsConstructor
 public class UsuarioBaseService {
@@ -21,14 +26,14 @@ public class UsuarioBaseService {
 
     public void salvar(UsuarioBaseRequest request) {
         validarEmailExistente(request.email());
-        var usuario = UsuarioBase.of(request);
-        usuario.setSenha(passwordEncoder.encode(request.senha()));
+        var usuario = UsuarioBase.of(request, passwordEncoder);
         repository.save(usuario);
     }
 
     public void editar(Integer id, UsuarioBaseAtualizacaoRequest request) {
         var usuario = findById(id);
-        validarEmailExistente(request.email());
+        validarUsuarioAtivo(usuario.getSituacao());
+        validarEmailParaAtualizar(request.email(), id);
 
         usuario.editar(request, passwordEncoder);
 
@@ -52,6 +57,23 @@ public class UsuarioBaseService {
                 .map(UsuarioBaseResponse::of);
     }
 
+    public void validarUsuarioAtivo(ESituacao situacao) {
+        if (situacao != ESituacao.A) {
+            throw new ValidationException("Nao e possivel fazer login com um usuario inativo.");
+        }
+    }
+
+    public UsuarioBase validarUsuario(String email) {
+        return repository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException(EX_USUARIO_NAO_ENCONTRADO));
+    }
+
+    private void validarEmailParaAtualizar(String email, Integer id) {
+        if (repository.existsByEmailAndIdNot(email, id)) {
+            throw new ValidationException(MSG_USUARIO_JA_CADASTRADO);
+        }
+    }
+
     private UsuarioBase findById(Integer id) {
         return repository.findById(id)
                 .orElseThrow(() -> new ValidationException("Usuario nao encontrado"));
@@ -59,7 +81,7 @@ public class UsuarioBaseService {
 
     private void validarEmailExistente(String email) {
         if (repository.existsByEmail(email)) {
-            throw new ValidationException("Este usuario ja esta cadastrado.");
+            throw new ValidationException(MSG_USUARIO_JA_CADASTRADO);
         }
     }
 }

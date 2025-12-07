@@ -9,6 +9,8 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.math.BigDecimal;
+
 @Entity
 @Getter
 @Setter
@@ -40,19 +42,32 @@ public class UsuarioBase {
     @Enumerated(EnumType.STRING)
     private ESituacao situacao;
 
-    public static UsuarioBase of(UsuarioBaseRequest request) {
+    @Column(name = "idade")
+    private Integer idade;
+
+    @Column(name = "peso")
+    private BigDecimal peso;
+
+    @Column(name = "altura")
+    private BigDecimal altura;
+
+    public static UsuarioBase of(UsuarioBaseRequest request, PasswordEncoder passwordEncoder) {
         return UsuarioBase.builder()
                 .email(request.email())
                 .nome(request.nome())
+                .senha(passwordEncoder.encode(request.senha()))
                 .role(ERole.BASICO)
                 .situacao(ESituacao.A)
+                .altura(request.altura())
+                .peso(request.peso())
+                .idade(request.idade())
                 .build();
     }
 
     public void editar(UsuarioBaseAtualizacaoRequest request, PasswordEncoder passwordEncoder) {
         this.email = request.email();
-        this.senha = request.senha();
-        this.nome = passwordEncoder.encode(request.nome());
+        this.nome = request.nome();
+        this.senha = passwordEncoder.encode(request.senha());
     }
 
     public void alterarSituacao() {

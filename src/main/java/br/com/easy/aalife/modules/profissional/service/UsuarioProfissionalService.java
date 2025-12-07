@@ -12,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import static br.com.easy.aalife.modules.comum.util.ConstantsUtils.MSG_USUARIO_JA_CADASTRADO;
+
 @Service
 @RequiredArgsConstructor
 public class UsuarioProfissionalService {
@@ -63,13 +65,13 @@ public class UsuarioProfissionalService {
 
     private void valdiarNumeroConselhoExistente(String numeroConselho) {
         if (repository.existsByNumeroConselho(numeroConselho)) {
-            throw new ValidationException("Este usuario ja esta cadastrado");
+            throw new ValidationException(MSG_USUARIO_JA_CADASTRADO);
         }
     }
 
     private void validarEmailExistente(String email) {
         if (repository.existsByEmail(email)) {
-            throw new ValidationException("Este usuario ja esta cadastrado.");
+            throw new ValidationException(MSG_USUARIO_JA_CADASTRADO);
         }
     }
 }
