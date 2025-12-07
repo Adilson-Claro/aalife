@@ -13,8 +13,6 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-//TODO VALIDAR ADM
-
 @Entity
 @Getter
 @Setter
