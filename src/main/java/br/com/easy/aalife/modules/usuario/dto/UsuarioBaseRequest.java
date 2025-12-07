@@ -1,4 +1,4 @@
-package br.com.easy.aalife.modules.comum.usuario.dto;
+package br.com.easy.aalife.modules.usuario.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

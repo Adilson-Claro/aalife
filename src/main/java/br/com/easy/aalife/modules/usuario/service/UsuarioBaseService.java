@@ -1,13 +1,13 @@
-package br.com.easy.aalife.modules.comum.usuario.service;
+package br.com.easy.aalife.modules.usuario.service;
 
 import br.com.easy.aalife.config.exceptions.NotFoundException;
 import br.com.easy.aalife.config.exceptions.ValidationException;
 import br.com.easy.aalife.modules.comum.enums.ESituacao;
-import br.com.easy.aalife.modules.comum.usuario.dto.UsuarioBaseAtualizacaoRequest;
-import br.com.easy.aalife.modules.comum.usuario.dto.UsuarioBaseRequest;
-import br.com.easy.aalife.modules.comum.usuario.dto.UsuarioBaseResponse;
-import br.com.easy.aalife.modules.comum.usuario.model.UsuarioBase;
-import br.com.easy.aalife.modules.comum.usuario.repository.UsuarioBaseRepository;
+import br.com.easy.aalife.modules.usuario.dto.UsuarioBaseAtualizacaoRequest;
+import br.com.easy.aalife.modules.usuario.dto.UsuarioBaseRequest;
+import br.com.easy.aalife.modules.usuario.dto.UsuarioBaseResponse;
+import br.com.easy.aalife.modules.usuario.model.UsuarioBase;
+import br.com.easy.aalife.modules.usuario.repository.UsuarioBaseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

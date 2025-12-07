@@ -1,9 +1,9 @@
-package br.com.easy.aalife.modules.comum.usuario.model;
+package br.com.easy.aalife.modules.usuario.model;
 
 import br.com.easy.aalife.modules.comum.enums.ERole;
 import br.com.easy.aalife.modules.comum.enums.ESituacao;
-import br.com.easy.aalife.modules.comum.usuario.dto.UsuarioBaseAtualizacaoRequest;
-import br.com.easy.aalife.modules.comum.usuario.dto.UsuarioBaseRequest;
+import br.com.easy.aalife.modules.usuario.dto.UsuarioBaseAtualizacaoRequest;
+import br.com.easy.aalife.modules.usuario.dto.UsuarioBaseRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

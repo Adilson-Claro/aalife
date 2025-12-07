@@ -2,7 +2,7 @@ package br.com.easy.aalife.modules.profissional.model;
 
 import br.com.easy.aalife.modules.comum.enums.ERole;
 import br.com.easy.aalife.modules.comum.enums.ESituacao;
-import br.com.easy.aalife.modules.comum.usuario.model.UsuarioBase;
+import br.com.easy.aalife.modules.usuario.model.UsuarioBase;
 import br.com.easy.aalife.modules.profissional.dto.UsuarioProfissionalAtualizacaoRequest;
 import br.com.easy.aalife.modules.profissional.dto.UsuarioProfissionalRequest;
 import br.com.easy.aalife.modules.profissional.enums.ETipoConselho;

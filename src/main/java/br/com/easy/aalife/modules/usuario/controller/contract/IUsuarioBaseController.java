@@ -1,10 +1,8 @@
-package br.com.easy.aalife.modules.comum.usuario.controller.contract;
+package br.com.easy.aalife.modules.usuario.controller.contract;
 
-import br.com.easy.aalife.modules.comum.usuario.dto.UsuarioBaseAtualizacaoRequest;
-import br.com.easy.aalife.modules.comum.usuario.dto.UsuarioBaseRequest;
-import br.com.easy.aalife.modules.comum.usuario.dto.UsuarioBaseResponse;
-import br.com.easy.aalife.modules.profissional.dto.UsuarioProfissionalAtualizacaoRequest;
-import br.com.easy.aalife.modules.profissional.dto.UsuarioProfissionalResponse;
+import br.com.easy.aalife.modules.usuario.dto.UsuarioBaseAtualizacaoRequest;
+import br.com.easy.aalife.modules.usuario.dto.UsuarioBaseRequest;
+import br.com.easy.aalife.modules.usuario.dto.UsuarioBaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;

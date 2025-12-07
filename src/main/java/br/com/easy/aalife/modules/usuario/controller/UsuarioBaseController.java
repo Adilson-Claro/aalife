@@ -1,10 +1,10 @@
-package br.com.easy.aalife.modules.comum.usuario.controller;
+package br.com.easy.aalife.modules.usuario.controller;
 
-import br.com.easy.aalife.modules.comum.usuario.controller.contract.IUsuarioBaseController;
-import br.com.easy.aalife.modules.comum.usuario.dto.UsuarioBaseAtualizacaoRequest;
-import br.com.easy.aalife.modules.comum.usuario.dto.UsuarioBaseRequest;
-import br.com.easy.aalife.modules.comum.usuario.dto.UsuarioBaseResponse;
-import br.com.easy.aalife.modules.comum.usuario.service.UsuarioBaseService;
+import br.com.easy.aalife.modules.usuario.controller.contract.IUsuarioBaseController;
+import br.com.easy.aalife.modules.usuario.dto.UsuarioBaseAtualizacaoRequest;
+import br.com.easy.aalife.modules.usuario.dto.UsuarioBaseRequest;
+import br.com.easy.aalife.modules.usuario.dto.UsuarioBaseResponse;
+import br.com.easy.aalife.modules.usuario.service.UsuarioBaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
