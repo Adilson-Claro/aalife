@@ -2,7 +2,9 @@ package br.com.easy.aalife.config.auth;
 
 import br.com.easy.aalife.config.auth.dto.LoginRequest;
 import br.com.easy.aalife.config.auth.dto.LoginResponse;
+import br.com.easy.aalife.config.auth.dto.UsuarioLogado;
 import br.com.easy.aalife.config.exceptions.ValidationException;
+import br.com.easy.aalife.modules.comum.enums.ERole;
 import br.com.easy.aalife.modules.usuario.model.UsuarioBase;
 import br.com.easy.aalife.modules.usuario.service.UsuarioBaseService;
 import io.jsonwebtoken.Jwts;
@@ -10,7 +12,9 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -37,6 +41,18 @@ public class AuthService {
         return new LoginResponse(token);
     }
 
+    public static UsuarioLogado getUsuarioLogado() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        var jwt = (Jwt) authentication.getPrincipal();
+
+        return new UsuarioLogado(
+                ((Number) jwt.getClaim("id")).intValue(),
+                jwt.getClaimAsString("nome"),
+                jwt.getSubject(),
+                ERole.valueOf(jwt.getClaimAsString("role"))
+        );
+    }
+
     private String gerarToken(UsuarioBase usuario) {
         var now = Instant.now();
         var expiration = now.plus(24, ChronoUnit.HOURS);
@@ -48,6 +64,8 @@ public class AuthService {
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(expiration))
                 .claim("role", usuario.getRole().name())
+                .claim("nome", usuario.getNome())
+                .claim("id", usuario.getId())
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -55,6 +73,12 @@ public class AuthService {
     private void validarSenha(String password, UsuarioBase usuario) {
         if (!usuario.isLoginCorreto(password, passwordEncoder)) {
             throw new ValidationException("Senha inválida");
+        }
+    }
+
+    public static void validarAdministrador(UsuarioLogado usuario) {
+        if (!ERole.ADMINISTRADOR.equals(usuario.role())) {
+            throw new ValidationException("Acesso negado.");
         }
     }
 }

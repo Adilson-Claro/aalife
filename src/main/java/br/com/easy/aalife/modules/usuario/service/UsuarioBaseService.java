@@ -14,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import static br.com.easy.aalife.config.auth.AuthService.getUsuarioLogado;
+import static br.com.easy.aalife.config.auth.AuthService.validarAdministrador;
 import static br.com.easy.aalife.modules.comum.util.ConstantsUtils.EX_USUARIO_NAO_ENCONTRADO;
 import static br.com.easy.aalife.modules.comum.util.ConstantsUtils.MSG_USUARIO_JA_CADASTRADO;
 
@@ -47,6 +49,8 @@ public class UsuarioBaseService {
     }
 
     public UsuarioBaseResponse buscarPorId(Integer id) {
+        var usuarioLogado = getUsuarioLogado();
+        validarAdministrador(usuarioLogado);
         var usuario = findById(id);
 
         return UsuarioBaseResponse.of(usuario);
