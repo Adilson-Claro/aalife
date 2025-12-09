@@ -1,4 +1,4 @@
-package br.com.easy.aalife.modules.profissional.enums;
+package br.com.easy.aalife.modules.comum.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

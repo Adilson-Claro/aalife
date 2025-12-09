@@ -5,11 +5,11 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum ERole {
+public enum ETipoUsuario {
 
+    COMUM("Usuario comum"),
     ADMINISTRADOR("Administrador"),
-    COMUM("Usuário comum"),
-    PROFISSIONAL("Usuário profissional");
+    PROFISSIONAL("Profissional de saude");
 
     private final String descricao;
 }

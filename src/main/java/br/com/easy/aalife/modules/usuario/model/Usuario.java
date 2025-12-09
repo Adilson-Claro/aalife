@@ -2,11 +2,12 @@ package br.com.easy.aalife.modules.usuario.model;
 
 import br.com.easy.aalife.modules.comum.enums.ERole;
 import br.com.easy.aalife.modules.comum.enums.ESituacao;
-import br.com.easy.aalife.modules.usuario.dto.UsuarioBaseAtualizacaoRequest;
-import br.com.easy.aalife.modules.usuario.dto.UsuarioBaseRequest;
+import br.com.easy.aalife.modules.comum.enums.ETipoUsuario;
+import br.com.easy.aalife.modules.comum.enums.ETipoConselho;
+import br.com.easy.aalife.modules.usuario.dto.UsuarioAtualizacaoRequest;
+import br.com.easy.aalife.modules.usuario.dto.UsuarioRequest;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
@@ -14,18 +15,23 @@ import java.math.BigDecimal;
 @Entity
 @Getter
 @Setter
-@SuperBuilder
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "usuario_base")
-@Inheritance(strategy = InheritanceType.JOINED)
-public class UsuarioBase {
+@Table(name = "usuario")
+public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "nome_exibicao", nullable = false)
+    private Integer idade;
+
+    private BigDecimal peso;
+
+    private BigDecimal altura;
+
+    @Column(name = "nome", nullable = false)
     private String nome;
 
     @Column(name = "email", nullable = false, unique = true)
@@ -34,37 +40,45 @@ public class UsuarioBase {
     @Column(name = "senha", nullable = false)
     private String senha;
 
-    @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
     private ERole role;
 
-    @Column(name = "situacao", nullable = false)
     @Enumerated(EnumType.STRING)
+    @Column(name = "situacao", nullable = false)
     private ESituacao situacao;
 
-    @Column(name = "idade")
-    private Integer idade;
+    @Column(name = "numero_conselho", unique = true)
+    private Integer numeroConselho;
 
-    @Column(name = "peso")
-    private BigDecimal peso;
+    @Column(name = "cpf", unique = true)
+    private String cpf;
 
-    @Column(name = "altura")
-    private BigDecimal altura;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_conselho")
+    private ETipoConselho tipoConselho;
 
-    public static UsuarioBase of(UsuarioBaseRequest request, PasswordEncoder passwordEncoder) {
-        return UsuarioBase.builder()
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_usuario", nullable = false)
+    private ETipoUsuario tipoUsuario;
+
+    public static Usuario of(UsuarioRequest request, PasswordEncoder passwordEncoder) {
+        return Usuario.builder()
                 .email(request.email())
                 .nome(request.nome())
                 .senha(passwordEncoder.encode(request.senha()))
-                .role(ERole.BASICO)
+                .tipoUsuario(request.tipoUsuario())
                 .situacao(ESituacao.A)
                 .altura(request.altura())
                 .peso(request.peso())
                 .idade(request.idade())
+                .cpf(request.cpf())
+                .numeroConselho(request.numeroConselho())
+                .tipoConselho(request.tipoConselho())
                 .build();
     }
 
-    public void editar(UsuarioBaseAtualizacaoRequest request, PasswordEncoder passwordEncoder) {
+    public void editar(UsuarioAtualizacaoRequest request, PasswordEncoder passwordEncoder) {
         this.email = request.email();
         this.nome = request.nome();
         this.senha = passwordEncoder.encode(request.senha());
