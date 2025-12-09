@@ -14,8 +14,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import static br.com.easy.aalife.config.auth.AuthService.getUsuarioLogado;
-import static br.com.easy.aalife.config.auth.AuthService.validarAdministrador;
+import static br.com.easy.aalife.config.auth.AuthService.*;
+import static br.com.easy.aalife.config.auth.UsuarioAutenticado.getUsuarioLogado;
+import static br.com.easy.aalife.modules.comum.enums.ETipoUsuario.*;
 import static br.com.easy.aalife.modules.comum.util.ConstantsUtils.EX_USUARIO_NAO_ENCONTRADO;
 import static br.com.easy.aalife.modules.comum.util.ConstantsUtils.MSG_USUARIO_JA_CADASTRADO;
 
@@ -27,12 +28,10 @@ public class UsuarioService {
     private final PasswordEncoder passwordEncoder;
 
     public void salvar(UsuarioRequest request) {
-        var role = validarTipoUsuario(request.tipoUsuario());
-        validarCamposPorTipo(request);
+        validarCamposPorTipoUsuario(request);
         validarEmailExistente(request.email());
-        valdiarNumeroConselhoExistente(request.numeroConselho());
-        var usuario = Usuario.of(request, passwordEncoder);
-        usuario.setRole(role);
+        validarNumeroConselhoExistente(request);
+        var usuario = criarUsuario(request);
 
         repository.save(usuario);
     }
@@ -90,26 +89,39 @@ public class UsuarioService {
                 .orElseThrow(() -> new NotFoundException(EX_USUARIO_NAO_ENCONTRADO));
     }
 
-    private void validarCamposPorTipo(UsuarioRequest request) {
-        var tipo = request.tipoUsuario();
-        var cpf = request.cpf();
+    private Usuario criarUsuario(UsuarioRequest request) {
+        var role = verificarTipoUsuario(request.tipoUsuario());
+        var usuario = Usuario.of(request, passwordEncoder);
+        usuario.setRole(role);
+        return usuario;
+    }
 
-        if (tipo == ETipoUsuario.PROFISSIONAL) {
-            if (request.numeroConselho() == null)
-                throw new ValidationException("Número do conselho é obrigatório para profissionais.");
-            if (request.tipoConselho() == null)
-                throw new ValidationException("Tipo de conselho é obrigatório para profissionais.");
-            if (cpf == null || cpf.isBlank())
-                throw new ValidationException("CPF é obrigatório para profissionais.");
-            return;
-        }
+    private void validarCamposPorTipoUsuario(UsuarioRequest request) {
+        validarNumeroConselho(request);
+        validarTipoConselho(request);
+        validarCpfParaAdministradorOuProfissional(request);
+    }
 
-        if (tipo == ETipoUsuario.ADMINISTRADOR && (cpf == null || cpf.isBlank())) {
-            throw new ValidationException("CPF é obrigatório para administradores.");
+    private void validarTipoConselho(UsuarioRequest request) {
+        if (request.tipoUsuario() == PROFISSIONAL && request.tipoConselho() == null) {
+            throw new ValidationException("Tipo de conselho é obrigatório.");
         }
     }
 
-    private ERole validarTipoUsuario(ETipoUsuario tipoUsuario) {
+    private void validarNumeroConselho(UsuarioRequest request) {
+        if (request.tipoUsuario() == PROFISSIONAL && request.numeroConselho() == null) {
+            throw new ValidationException("Número do conselho é obrigatório.");
+        }
+    }
+
+    private void validarCpfParaAdministradorOuProfissional(UsuarioRequest request) {
+        if (!request.tipoUsuario().equals(COMUM) &&
+                (request.cpf() == null || request.cpf().isBlank())) {
+            throw new ValidationException("CPF é obrigatório.");
+        }
+    }
+
+    private ERole verificarTipoUsuario(ETipoUsuario tipoUsuario) {
         return switch (tipoUsuario) {
             case PROFISSIONAL -> ERole.PROFISSIONAL;
             case ADMINISTRADOR -> ERole.ADMINISTRADOR;
@@ -123,12 +135,13 @@ public class UsuarioService {
         }
     }
 
-    private void valdiarNumeroConselhoExistente(Integer numeroConselho) {
-        if (repository.existsByNumeroConselho(numeroConselho)) {
+    private void validarNumeroConselhoExistente(UsuarioRequest request) {
+        if (request.tipoUsuario() == PROFISSIONAL
+                && repository.existsByNumeroConselho(request.numeroConselho())) {
+
             throw new ValidationException(MSG_USUARIO_JA_CADASTRADO);
         }
     }
-
 
     private Usuario findById(Integer id) {
         return repository.findById(id)

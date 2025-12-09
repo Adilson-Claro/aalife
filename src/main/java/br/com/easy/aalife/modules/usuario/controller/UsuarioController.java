@@ -1,6 +1,5 @@
 package br.com.easy.aalife.modules.usuario.controller;
 
-import br.com.easy.aalife.modules.comum.enums.ETipoUsuario;
 import br.com.easy.aalife.modules.usuario.controller.contract.IUsuarioController;
 import br.com.easy.aalife.modules.usuario.dto.*;
 import br.com.easy.aalife.modules.usuario.service.UsuarioService;

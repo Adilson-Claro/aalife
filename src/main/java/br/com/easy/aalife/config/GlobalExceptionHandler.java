@@ -2,6 +2,7 @@ package br.com.easy.aalife.config;
 
 import br.com.easy.aalife.config.exceptions.NotFoundException;
 import br.com.easy.aalife.config.exceptions.ValidationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -41,8 +43,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleGeneric() {
-        return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no sistema");
+    public ResponseEntity<?> handleGeneric(Exception ex) {
+        log.warn(ex.getMessage());
+        var body = new HashMap<>();
+        body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+        body.put("error", "Erro interno no servidor.");
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
     }
 
     private ResponseEntity<?> buildError(HttpStatus status, Object message) {
