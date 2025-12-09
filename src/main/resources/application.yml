@@ -1,0 +1,20 @@
+jwt:
+  secret: ${JWT_SECRET}
+
+spring:
+  application:
+    name: aalife
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+logging:
+  level:
+    org:
+      hibernate:
+        orm:
+          connections:
+            pooling: OFF

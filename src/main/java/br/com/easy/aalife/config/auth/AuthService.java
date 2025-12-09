@@ -5,8 +5,8 @@ import br.com.easy.aalife.config.auth.dto.LoginResponse;
 import br.com.easy.aalife.config.auth.dto.UsuarioLogado;
 import br.com.easy.aalife.config.exceptions.ValidationException;
 import br.com.easy.aalife.modules.comum.enums.ERole;
-import br.com.easy.aalife.modules.usuario.model.UsuarioBase;
-import br.com.easy.aalife.modules.usuario.service.UsuarioBaseService;
+import br.com.easy.aalife.modules.usuario.model.Usuario;
+import br.com.easy.aalife.modules.usuario.service.UsuarioService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -26,15 +26,15 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final UsuarioBaseService usuarioBaseService;
+    private final UsuarioService usuarioService;
     private final PasswordEncoder passwordEncoder;
 
     @Value("${jwt.secret}")
     private String secret;
 
     public LoginResponse login(LoginRequest request) {
-        var usuario = usuarioBaseService.validarUsuario(request.email());
-        usuarioBaseService.validarUsuarioAtivo(usuario.getSituacao());
+        var usuario = usuarioService.validarUsuario(request.email());
+        usuarioService.validarUsuarioAtivo(usuario.getSituacao());
         validarSenha(request.senha(), usuario);
 
         var token = gerarToken(usuario);
@@ -53,7 +53,7 @@ public class AuthService {
         );
     }
 
-    private String gerarToken(UsuarioBase usuario) {
+    private String gerarToken(Usuario usuario) {
         var now = Instant.now();
         var expiration = now.plus(24, ChronoUnit.HOURS);
         var key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
@@ -70,7 +70,7 @@ public class AuthService {
                 .compact();
     }
 
-    private void validarSenha(String password, UsuarioBase usuario) {
+    private void validarSenha(String password, Usuario usuario) {
         if (!usuario.isLoginCorreto(password, passwordEncoder)) {
             throw new ValidationException("Senha inválida");
         }
