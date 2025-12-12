@@ -74,7 +74,7 @@ public class UsuarioService {
 
     public void validarUsuarioAtivo(ESituacao situacao) {
         if (situacao != ESituacao.A) {
-            throw new ValidationException("Nao e possivel fazer login com um usuario inativo.");
+            throw new ValidationException("Não é possível fazer login com um usuário inativo.");
         }
     }
 
