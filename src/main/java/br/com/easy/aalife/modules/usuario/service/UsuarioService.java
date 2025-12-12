@@ -14,9 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import static br.com.easy.aalife.config.auth.AuthService.*;
-import static br.com.easy.aalife.config.auth.UsuarioAutenticado.getUsuarioLogado;
-import static br.com.easy.aalife.modules.comum.enums.ETipoUsuario.*;
+import static br.com.easy.aalife.modules.comum.enums.ETipoUsuario.COMUM;
+import static br.com.easy.aalife.modules.comum.enums.ETipoUsuario.PROFISSIONAL;
 import static br.com.easy.aalife.modules.comum.util.ConstantsUtils.EX_USUARIO_NAO_ENCONTRADO;
 import static br.com.easy.aalife.modules.comum.util.ConstantsUtils.MSG_USUARIO_JA_CADASTRADO;
 
@@ -53,17 +52,12 @@ public class UsuarioService {
     }
 
     public UsuarioResponse buscarPorId(Integer id) {
-        var usuarioLogado = getUsuarioLogado();
-        validarAdministrador(usuarioLogado);
         var usuario = findById(id);
 
         return UsuarioResponse.of(usuario);
     }
 
     public Page<AdministradorResponse> buscarAdministrador(Integer id, Pageable pageable) {
-        var usuario = getUsuarioLogado();
-        validarAdministrador(usuario);
-
         return repository.findById(id, pageable)
                 .map(AdministradorResponse::of);
     }

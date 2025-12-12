@@ -1,5 +1,6 @@
-package br.com.easy.aalife.config.auth;
+package br.com.easy.aalife.config.auth.controller;
 
+import br.com.easy.aalife.config.auth.service.AuthService;
 import br.com.easy.aalife.config.auth.dto.LoginRequest;
 import br.com.easy.aalife.config.auth.dto.LoginResponse;
 import lombok.RequiredArgsConstructor;
