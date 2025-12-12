@@ -12,7 +12,7 @@
 
 	<groupId>br.com.easy</groupId>
 	<artifactId>aalife</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>aalife</name>
 	<description>Projeto backend api aalife</description>
 
