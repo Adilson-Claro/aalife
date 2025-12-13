@@ -1,6 +1,6 @@
 package br.com.easy.aalife.config.auth.jwt;
 
-import br.com.easy.aalife.modules.usuario.model.Usuario;
+import br.com.easy.aalife.modules.usuario.comum.model.Usuario;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;

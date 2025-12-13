@@ -24,7 +24,6 @@ public class SecurityConfig {
     @Bean
     @SneakyThrows
     public SecurityFilterChain filterChain(HttpSecurity http) {
-
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(config ->
@@ -32,7 +31,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/api/usuario/cadastrar/**").permitAll()
-                        .requestMatchers("/api/usuario/*/administrador/**")
+                        .requestMatchers("/api/usuario/*/alterar-situacao/**")
+                        .hasRole(ERole.ADMINISTRADOR.name())
+                        .requestMatchers("/api/profissional/cadastrar/**").permitAll()
+                        .requestMatchers("/api/administrador/**")
                         .hasRole(ERole.ADMINISTRADOR.name())
                         .anyRequest().authenticated()
                 )
